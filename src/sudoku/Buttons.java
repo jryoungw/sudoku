@@ -3,6 +3,10 @@ package sudoku;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.List;
 
 import sudoku.Board;
 
@@ -17,6 +21,61 @@ public class Buttons{
 	private static int jset = 0;
 	private static int sum = 0;
 	private static int flag = 0;
+	private static Integer[][] defaultIndicesCanvas = {{0,2},
+											{0,5},
+											{0,6},
+											{1,0},
+											{1,1},
+											{1,2},
+											{1,4},
+											{1,6},
+											{1,7},
+											{2,0},
+											{2,2},
+											{2,5},
+											{2,7},
+											{2,8},
+											{3,0},
+											{3,1},
+											{3,4},
+											{3,5},
+											{3,6},
+											{4,1},
+											{4,6},
+											{4,8},
+											{5,0},
+											{5,2},
+											{5,5},
+											{5,8},
+											{6,0},
+											{6,2},
+											{6,4},
+											{6,6},
+											{6,7},
+											{7,0},
+											{7,2},
+											{7,7},
+											{8,5},
+											{8,6},
+											{8,7},
+											{8,8}};
+	private static List<List<Integer>> defaultIndices = Arrays.asList(defaultIndicesCanvas).stream().map(i -> Arrays.asList(i)).collect(Collectors.toList());
+	private static ArrayList<ArrayList<Integer>> sudokuMap = new ArrayList<ArrayList<Integer>>();
+	
+	
+	
+	private static boolean checkIfContains(JButton[][] matrix, int i, int j) {
+		boolean contains = false;
+		for(int k=0;k<defaultIndices.size();k++) {
+			if(i==defaultIndices.get(k).get(0)) {
+				if(j==defaultIndices.get(k).get(1)) {
+					contains = true;
+				}
+			}
+		}
+		return contains;
+
+	}
 	
 	public static void setButtons(){
 		System.out.println("Play start!");
@@ -31,6 +90,7 @@ public class Buttons{
 			buttonList[idx].setFont(buttonList[idx].getFont().deriveFont(28f));
 			f.add(buttonList[idx]);
 		}
+		
 		
 		
 		
@@ -54,11 +114,14 @@ public class Buttons{
 		for(int i=0;i<9;i++)
 			for(int j=0;j<9;j++) {
 				matrix[j][i].setBounds(i*90, j*90, 90, 90);
-				f.add(matrix[i][j]);
 				matrix[i][j].setFont(matrix[j][i].getFont().deriveFont(28f));
-				
+				boolean contains = checkIfContains(matrix, i, j);
+				if(contains) {
+					matrix[i][j].setOpaque(true);
+					matrix[i][j].setBackground(Color.BLACK);
+				}
+				f.add(matrix[i][j]);
 			}
-		
 		Buttons but = new Buttons();
 		/*
 		 * Button click actions
@@ -73,7 +136,7 @@ public class Buttons{
 				JButton pressed = matrix[i][j];
 				pressed.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						if(e.getSource()==pressed) {
+						if (e.getSource() == pressed) {
 							but.iset = itmp;
 							but.jset = jtmp;
 						}
@@ -81,6 +144,30 @@ public class Buttons{
 				});
 			}
 		}
+		
+//		for(int i=0;i<9;i++) {
+//			for(int j=0;j<9;j++) {
+//				final int itmp = i;
+//				final int jtmp = j;
+//				JButton pressed = matrix[i][j];
+//				pressed.addActionListener(new ActionListener() {
+//					public void actionPerformed(ActionEvent e) {
+//						if(e.getSource()==pressed) {
+//							but.iset = itmp;
+//							but.jset = jtmp;
+//							for(int i=0;i<9;i++) {
+//								for(int j=0;j<9;j++) {
+//									if(matrix[i][j].getText()==pressed.getText()) {
+//										matrix[i][j].setOpaque(true);
+//										matrix[i][j].setBackground(Color.GRAY);
+//									}
+//								}
+//							}
+//						}
+//					}
+//				});
+//			}
+//		}
 		
 		// 1~9 button
 		
@@ -101,10 +188,17 @@ public class Buttons{
 			public void actionPerformed(ActionEvent e) {
 				for(int i=0;i<9;i++) {
 					for(int j=0;j<9;j++) {
-						if(matrix[i][j].isEnabled()){
+//						ArrayList<Integer> tmpList = new ArrayList<Integer>();
+//						tmpList.add(i);
+//						tmpList.add(j);
+						final Integer[] tmpList = {i,j};
+						if(!defaultIndices.contains(Arrays.asList(tmpList))) {
+//						if(!defaultIndices.get(tmpList)) {
 							matrix[i][j].setText("");
+							matrix[i][j].setBackground(null);
+						} else {
+							System.out.println(1);
 						}
-						matrix[i][j].setBackground(null);
 					}
 				}
 			}
@@ -178,6 +272,8 @@ public class Buttons{
 				}
 			}
 		});
+		
+		
 
 
 		
